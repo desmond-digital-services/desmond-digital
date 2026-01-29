@@ -4,62 +4,1011 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desmond Digital — We Don't Do Wrappers</title>
+    <meta name="description" content="Anti-wrapper autonomous agent framework. Built on a farm, now scaling to factories.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #00f0ff;
+            --secondary: #0a0a0a;
+            --accent: #666;
+            --text: #ffffff;
+            --text-muted: #888;
+            --background: #050505;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-hover: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(10, 10, 10, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #e5e5e5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text);
             line-height: 1.6;
-            padding: 40px 20px;
+            overflow-x: hidden;
+            cursor: none;
         }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { font-size: 2.5rem; margin-bottom: 20px; color: #fff; }
-        h2 { font-size: 1.5rem; margin: 30px 0 15px; color: #fff; }
-        p { margin-bottom: 15px; color: #a5a5a5; }
-        .tagline { font-size: 1.25rem; color: #4ade80; margin-bottom: 40px; }
-        .manifesto-link {
-            display: inline-block;
-            background: #1a1a1a;
-            color: #4ade80;
-            padding: 12px 24px;
+
+        /* Custom Cursor */
+        .cursor {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.3;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cursor.hover {
+            transform: scale(2.5);
+        }
+
+        .cursor-follower.hover {
+            transform: scale(1.5);
+            opacity: 0.6;
+        }
+
+        /* WebGL Background */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.015;
+            z-index: 1;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Vignette */
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(5, 5, 5, 0.5) 70%, rgba(5, 5, 5, 0.9) 100%);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            position: relative;
+            z-index: 3;
+        }
+
+        /* Header */
+        header {
+            padding: 40px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
             text-decoration: none;
-            border-radius: 6px;
-            border: 1px solid #4ade80;
-            transition: all 0.2s;
+            transition: color 0.3s ease;
         }
-        .manifesto-link:hover { background: #4ade80; color: #0a0a0a; }
-        .cta {
+
+        .nav-link:hover {
+            color: var(--text);
+        }
+
+        .nav-link svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 100px 0;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero-tagline {
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 32px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero h1 .line {
+            display: block;
+        }
+
+        .hero-description {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 48px;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* CTA Button */
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cta-button:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .cta-button.primary {
+            background: var(--text);
+            color: var(--secondary);
+            border-color: var(--text);
+        }
+
+        .cta-button.primary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .cta-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 60px;
+            margin-top: 100px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            opacity: 0;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 160px 0;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            max-width: 700px;
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            margin-bottom: 48px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .card p {
+            font-size: 0.9375rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Code Block */
+        .code-block {
+            margin: 60px 0;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .code-dot:nth-child(1) { background: #ff5f56; }
+        .code-dot:nth-child(2) { background: #ffbd2e; }
+        .code-dot:nth-child(3) { background: #27c93f; }
+
+        .code-content {
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+        }
+
+        .code-content .keyword { color: #c792ea; }
+        .code-content .function { color: #82aaff; }
+        .code-content .string { color: #c3e88d; }
+        .code-content .comment { color: #546e7a; }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 40px;
-            padding: 20px;
-            background: #1a1a1a;
-            border-radius: 8px;
-            border-left: 4px solid #4ade80;
         }
-        code { background: #1a1a1a; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 20px 24px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .comparison-table td {
+            font-size: 0.9375rem;
+        }
+
+        .comparison-table td:first-child {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+        }
+
+        .cross-icon {
+            width: 20px;
+            height: 20px;
+            fill: #333;
+        }
+
+        /* Footer */
+        footer {
+            padding: 80px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .footer-copy {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 24px;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .cta-button {
+                justify-content: center;
+            }
+
+            .comparison-table {
+                font-size: 0.875rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 16px;
+            }
+
+            .cursor, .cursor-follower {
+                display: none;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 1px solid var(--border);
+            border-top: 1px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Desmond Digital</h1>
-        <p class="tagline">We don't do wrappers. We build foundations.</p>
-
-        <p>The AI industry is drowning in chat interfaces with training wheels. Every week, another startup launches an "agent" that's really just a prettier way to type prompts into a language model.</p>
-
-        <p>We built something different.</p>
-
-        <h2>FF-Terminal</h2>
-        <p>An autonomous agent framework. Headless by design. Agents that run unattended for hours. Multi-day context persistence. Custom architecture built for actual autonomy—not conversational AI with extra steps.</p>
-
-        <p>Same models under the hood. Different architecture entirely.</p>
-
-        <div class="cta">
-            <p><strong>Built where it mattered.</strong> On a farm, because nothing else worked for real operations. Now scaling to factories, finance, logistics—any domain where systems need to run without constant human oversight.</p>
-        </div>
-
-        <p style="margin-top: 40px;">
-            <a href="https://github.com/0-CYBERDYNE-SYSTEMS-0/desmond-digital" class="manifesto-link">View on GitHub →</a>
-        </p>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loader"></div>
     </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- WebGL Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Texture Overlays -->
+    <div class="noise-overlay"></div>
+    <div class="vignette"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">Desmond<span>.</span>Digital</div>
+            <a href="https://github.com/0-CYBERDYNE-SYSTEMS-0/desmond-digital" class="nav-link" target="_blank">
+                <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                GitHub
+            </a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <p class="hero-tagline">Autonomous Agent Framework</p>
+                <h1>
+                    <span class="line">We don't do</span>
+                    <span class="line">wrappers.</span>
+                    <span class="line" style="color: var(--primary);">We build</span>
+                    <span class="line">foundations.</span>
+                </h1>
+                <p class="hero-description">
+                    The AI industry is drowning in chat interfaces. We built something that removes the bottleneck entirely. Headless by design. Agents that run unattended for hours.
+                </p>
+                <div class="cta-group">
+                    <a href="https://github.com/0-CYBERDYNE-SYSTEMS-0/desmond-digital" class="cta-button primary" target="_blank">
+                        <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        View Repository
+                    </a>
+                    <a href="#manifesto" class="cta-button">
+                        Read Manifesto
+                        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                    </a>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-value">Headless</span>
+                        <span class="stat-label">By Design</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">Multi-Day</span>
+                        <span class="stat-label">Context</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">0/24</span>
+                        <span class="stat-label">Human Required</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="manifesto">
+            <div class="section-label">The Problem</div>
+            <h2 class="section-title">Chat interfaces keep you as the bottleneck.</h2>
+            <p class="section-description">
+                Every "agent tool" promises autonomy but requires constant human intervention. We built the opposite.
+            </p>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <h3>Headless Operation</h3>
+                    <p>No chat interface. No human in the loop. Agents execute tasks autonomously from start to finish.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    </div>
+                    <h3>Multi-Day Persistence</h3>
+                    <p>Context that survives across sessions. Agents that reason across days, not just chat windows.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    </div>
+                    <h3>Custom Architecture</h3>
+                    <p>Not assembled from open-source. Built from scratch for actual autonomy, not conversational AI with extra steps.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Section -->
+        <section>
+            <div class="section-label">Differentiation</div>
+            <h2 class="section-title">Not a wrapper. A framework underneath.</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Capability</th>
+                        <th>FF-Terminal</th>
+                        <th>Claude Code</th>
+                        <th>Codex CLI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Headless Operation</td>
+                        <td><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                    </tr>
+                    <tr>
+                        <td>Multi-Day Context</td>
+                        <td><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                    </tr>
+                    <tr>
+                        <td>Autonomous Execution</td>
+                        <td><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                    </tr>
+                    <tr>
+                        <td>Custom Framework</td>
+                        <td><svg class="check-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                        <td><svg class="cross-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Origin Section -->
+        <section>
+            <div class="section-label">Origin</div>
+            <h2 class="section-title">Built where it mattered.</h2>
+            <p class="section-description">
+                Not in a San Francisco incubator. On a farm. Because nothing else worked for real operations.
+            </p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                </div>
+                <div class="code-content">
+                    <pre><span class="comment">// Three years ago, running a farm at 3 AM</span>
+<span class="comment">// Every "agent tool" required my attention</span>
+<span class="comment">// Chat interfaces, CLI wrappers, chat bots</span>
+<span class="comment">// They all kept ME as the bottleneck</span>
+
+<span class="keyword">const</span> <span class="function">reality</span> = {
+  crops: <span class="keyword">true</span>,
+  humanAttention: <span class="string">"required by every agent tool"</span>,
+  automation: <span class="keyword">false</span>
+};
+
+<span class="comment">// So I built something without that assumption</span>
+<span class="keyword">const</span> <span class="function">FF-Terminal</span> = {
+  headless: <span class="keyword">true</span>,
+  autonomous: <span class="keyword">true</span>,
+  persistence: <span class="string">"multi-day"</span>
+};
+
+<span class="comment">// The farm still runs on it</span>
+<span class="comment">// So do other things now</span></pre>
+                </div>
+            </div>
+
+            <a href="https://github.com/0-CYBERDYNE-SYSTEMS-0/desmond-digital" class="cta-button" target="_blank">
+                Explore the Framework
+                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+            </a>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <p class="footer-copy">&copy; 2026 Desmond Digital. Built where it mattered.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/0-CYBERDYNE-SYSTEMS-0/desmond-digital" target="_blank">GitHub</a>
+                    <a href="#" target="_blank">Manifesto</a>
+                    <a href="#" target="_blank">Contact</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Lenis Smooth Scrolling
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            smooth: true,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // WebGL Particle System
+        class ParticleNetwork {
+            constructor() {
+                this.canvas = document.getElementById('particle-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.mouse = { x: 0, y: 0 };
+                this.init();
+            }
+
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+
+                this.createParticles();
+                this.animate();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            createParticles() {
+                const count = Math.floor((window.innerWidth * window.innerHeight) / 15000);
+                for (let i = 0; i < count; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        radius: Math.random() * 1.5 + 0.5,
+                        opacity: Math.random() * 0.4 + 0.2
+                    });
+                }
+            }
+
+            drawParticles() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                this.particles.forEach((particle, i) => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+
+                    const dx = this.mouse.x - particle.x;
+                    const dy = this.mouse.y - particle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 120) {
+                        const force = (120 - distance) / 120;
+                        particle.vx -= (dx / distance) * force * 0.02;
+                        particle.vy -= (dy / distance) * force * 0.02;
+                    }
+
+                    if (particle.x < 0 || particle.x > this.canvas.width) particle.vx *= -1;
+                    if (particle.y < 0 || particle.y > this.canvas.height) particle.vy *= -1;
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(0, 240, 255, ${particle.opacity})`;
+                    this.ctx.fill();
+
+                    this.particles.slice(i + 1).forEach(other => {
+                        const dx = other.x - particle.x;
+                        const dy = other.y - particle.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 100) {
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(particle.x, particle.y);
+                            this.ctx.lineTo(other.x, other.y);
+                            this.ctx.strokeStyle = `rgba(0, 240, 255, ${0.15 * (1 - dist / 100)})`;
+                            this.ctx.stroke();
+                        }
+                    });
+                });
+            }
+
+            animate() {
+                this.drawParticles();
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // Custom Cursor
+        class CustomCursor {
+            constructor() {
+                this.cursor = document.querySelector('.cursor');
+                this.follower = document.querySelector('.cursor-follower');
+                this.init();
+            }
+
+            init() {
+                document.addEventListener('mousemove', (e) => {
+                    this.cursor.style.left = e.clientX - 4 + 'px';
+                    this.cursor.style.top = e.clientY - 4 + 'px';
+                    
+                    setTimeout(() => {
+                        this.follower.style.left = e.clientX - 20 + 'px';
+                        this.follower.style.top = e.clientY - 20 + 'px';
+                    }, 80);
+                });
+
+                const interactive = document.querySelectorAll('a, button, .card');
+                interactive.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        this.cursor.classList.add('hover');
+                        this.follower.classList.add('hover');
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        this.cursor.classList.remove('hover');
+                        this.follower.classList.remove('hover');
+                    });
+                });
+            }
+        }
+
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        function initAnimations() {
+            // Hero animations
+            gsap.to('.hero-tagline', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: 0.2
+            });
+
+            gsap.to('h1', {
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: 'power3.out',
+                delay: 0.4
+            });
+
+            gsap.to('.hero-description', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: 0.6
+            });
+
+            gsap.to('.cta-group', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: 0.8
+            });
+
+            gsap.to('.stats', {
+                opacity: 1,
+                duration: 1,
+                ease: 'power3.out',
+                delay: 1
+            });
+
+            // Card animations
+            gsap.utils.toArray('.card').forEach((card, i) => {
+                gsap.from(card, {
+                    opacity: 0,
+                    y: 40,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                    },
+                    delay: i * 0.1
+                });
+            });
+
+            // Table animation
+            gsap.from('.comparison-table', {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '.comparison-table',
+                    start: 'top 80%',
+                }
+            });
+        }
+
+        // Hide loading screen
+        function hideLoading() {
+            setTimeout(() => {
+                document.querySelector('.loading-screen').classList.add('hidden');
+            }, 800);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            new ParticleNetwork();
+            new CustomCursor();
+            initAnimations();
+            hideLoading();
+        });
+    </script>
 </body>
 </html>
