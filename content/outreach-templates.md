@@ -18,7 +18,7 @@ Quick test: give it a multi-step task and walk away. See if it finishes without 
 
 No pitch deck. No VC funding. Just something that works.
 
-Happy to show you: [link to demo/repo]
+Happy to show you: https://github.com/0-CYBERDYNE-SYSTEMS-0/desmond-digital
 
 TD
 Desmond Digital
@@ -45,7 +45,7 @@ Most "agent tools" are wrappers. We built the framework underneath.
 
 The AI industry is drowning in chatbots. This is about what comes after.
 
-[Link to manifesto or content]
+https://github.com/0-CYBERDYNE-SYSTEMS-0/desmond-digital
 
 ---
 
