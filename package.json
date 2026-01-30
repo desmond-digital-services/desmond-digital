@@ -1,0 +1,18 @@
+{
+  "name": "desmond-digital",
+  "version": "1.0.0",
+  "description": "Anti-wrapper autonomous agent framework. Built on a farm, now scaling to factories.",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site - no build required'",
+    "preview": "npx serve dist"
+  },
+  "keywords": [
+    "autonomous",
+    "agents",
+    "ai",
+    "framework",
+    "headless"
+  ],
+  "license": "MIT"
+}
