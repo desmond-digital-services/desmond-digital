@@ -1,4 +1,4 @@
-# 🦁 Desmond Digital
+# Desmond Digital
 
 **Anti-Wrapper Autonomous Agent Framework**
 
@@ -9,21 +9,21 @@ Desmond Digital is a revolutionary agent framework designed to operate autonomou
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Overview](#-overview)
-- [✨ Key Features](#-key-features)
-- [🚀 Quick Start](#-quick-start)
-- [🏗️ Architecture](#️-architecture)
-- [📊 Comparison](#-comparison)
-- [💡 Use Cases](#-use-cases)
-- [🤝 Contributing](#-contributing)
-- [📚 Documentation](#-documentation)
-- [📄 License](#-license)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Quick Start](#quick-start)
+- [Architecture](#architecture)
+- [Comparison](#comparison)
+- [Use Cases](#use-cases)
+- [Contributing](#contributing)
+- [Documentation](#documentation)
+- [License](#license)
 
 ---
 
-## 📖 Overview
+## Overview
 
 Desmond Digital represents a paradigm shift in autonomous agent development. While most frameworks simply wrap OpenAI's API, Anthropic's API, or other services, Desmond Digital builds a **custom architecture** that decouples your agents from any single AI provider.
 
@@ -31,19 +31,16 @@ Desmond Digital represents a paradigm shift in autonomous agent development. Whi
 
 Traditional agent frameworks look like this:
 ```
-Your Code → Wrapper Library → OpenAI/Anthropic API → Black Box
+Your Code -> Wrapper Library -> OpenAI/Anthropic API -> Black Box
 ```
 
 Desmond Digital's architecture:
 ```
-Your Code → Custom Agent Core → Multi-Provider Abstraction → Your Choice of LLM
-                                              ↓
-                                    ┌─────────────────┐
-                                    │ OpenAI          │
-                                    │ Anthropic       │
-                                    │ Local Models    │
-                                    │ Custom Backends │
-                                    └─────────────────┘
+Your Code -> Custom Agent Core -> Multi-Provider Abstraction -> Your Choice of LLM
+                                             |
+                        +---------------------+---------------------+
+                        |                     |                     |
+                   OpenAI              Anthropic            Local/Custom
 ```
 
 This means:
@@ -54,22 +51,22 @@ This means:
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 | Feature | Description |
 |---------|-------------|
-| 🖥️ **Headless Operation** | Run agents completely headless with no browser or UI dependencies. Perfect for servers, containers, and CI/CD pipelines. |
-| 📅 **Multi-Day Persistence** | Agents maintain memory, context, and state across sessions, days, or weeks. Never lose progress or context again. |
-| 🔧 **Custom Architecture** | Built from scratch with modular components. No API wrappers, no black boxes. Full control over agent behavior. |
-| 🔄 **Provider Agnostic** | Use any LLM provider (OpenAI, Anthropic, local models, custom backends) without changing your agent code. |
-| 📦 **Lightweight** | Minimal dependencies, fast startup, low resource footprint. Runs anywhere Python runs. |
-| 🔌 **Plugin System** | Extend functionality with plugins for storage, monitoring, notifications, and more. |
-| 🛡️ **Security First** | Built with security in mind. No data leaves your infrastructure unless you configure it to. |
-| 📊 **Observability** | Built-in logging, metrics, and tracing to understand exactly what your agents are doing. |
+| **Headless Operation** | Run agents completely headless with no browser or UI dependencies. Perfect for servers, containers, and CI/CD pipelines. |
+| **Multi-Day Persistence** | Agents maintain memory, context, and state across sessions, days, or weeks. Never lose progress or context again. |
+| **Custom Architecture** | Built from scratch with modular components. No API wrappers, no black boxes. Full control over agent behavior. |
+| **Provider Agnostic** | Use any LLM provider (OpenAI, Anthropic, local models, custom backends) without changing your agent code. |
+| **Lightweight** | Minimal dependencies, fast startup, low resource footprint. Runs anywhere Python runs. |
+| **Plugin System** | Extend functionality with plugins for storage, monitoring, notifications, and more. |
+| **Security First** | Built with security in mind. No data leaves your infrastructure unless you configure it to. |
+| **Observability** | Built-in logging, metrics, and tracing to understand exactly what your agents are doing. |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -83,7 +80,7 @@ This means:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/desmond-digital.git
+git clone https://github.com/desmond-digital-services/desmond-digital.git
 cd desmond-digital
 
 # Install dependencies
@@ -155,45 +152,45 @@ python my_agent.py
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 Desmond Digital follows a modular, layered architecture designed for flexibility and extensibility.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Agent Layer                               │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │   Memory    │  │   Planning  │  │  Execution  │             │
-│  │   Module    │  │   Module    │  │   Module    │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      Core Engine Layer                           │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │   Session   │  │   Context   │  │   Decision  │             │
-│  │   Manager   │  │   Manager   │  │   Engine    │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Provider Abstraction Layer                    │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │   OpenAI    │  │  Anthropic  │  │    Local    │             │
-│  │  Adapter    │  │   Adapter   │  │   Adapter   │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                       Storage Layer                              │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │   Memory    │  │   Vector    │  │   State     │             │
-│  │   Store     │  │   Store     │  │   Store     │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
-└─────────────────────────────────────────────────────────────────┘
++----------------------------------------------------------------------+
+|                         Agent Layer                                   |
+|  +-------------+  +-------------+  +-------------+                   |
+|  |   Memory    |  |   Planning  |  |  Execution  |                   |
+|  |   Module    |  |   Module    |  |   Module    |                   |
+|  +-------------+  +-------------+  +-------------+                   |
++----------------------------------------------------------------------+
+                                  |
+                                  v
++----------------------------------------------------------------------+
+|                       Core Engine Layer                               |
+|  +-------------+  +-------------+  +-------------+                   |
+|  |   Session   |  |   Context   |  |   Decision  |                   |
+|  |   Manager   |  |   Manager   |  |   Engine    |                   |
+|  +-------------+  +-------------+  +-------------+                   |
++----------------------------------------------------------------------+
+                                  |
+                                  v
++----------------------------------------------------------------------+
+|                     Provider Abstraction Layer                        |
+|  +-------------+  +-------------+  +-------------+                   |
+|  |   OpenAI    |  |  Anthropic  |  |    Local    |                   |
+|  |  Adapter    |  |   Adapter   |  |   Adapter   |                   |
+|  +-------------+  +-------------+  +-------------+                   |
++----------------------------------------------------------------------+
+                                  |
+                                  v
++----------------------------------------------------------------------+
+|                        Storage Layer                                  |
+|  +-------------+  +-------------+  +-------------+                   |
+|  |   Memory    |  |   Vector    |  |   State     |                   |
+|  |   Store     |  |   Store     |  |   Store     |                   |
+|  +-------------+  +-------------+  +-------------+                   |
++----------------------------------------------------------------------+
 ```
 
 ### Component Descriptions
@@ -207,19 +204,19 @@ Desmond Digital follows a modular, layered architecture designed for flexibility
 
 ---
 
-## 📊 Comparison
+## Comparison
 
-| Feature | FF-Terminal | Claude Code | Codex CLI | **Desmond Digital** |
-|---------|-------------|-------------|-----------|---------------------|
-| **Headless Operation** | ❌ | ❌ | ✅ | ✅ |
-| **Multi-Day Persistence** | ❌ | ❌ | ❌ | ✅ |
-| **Custom Architecture** | ❌ | ❌ | ❌ | ✅ |
-| **Provider Agnostic** | ❌ | ❌ | ❌ | ✅ |
-| **No API Wrapping** | ❌ | ❌ | ❌ | ✅ |
-| **Open Source** | ❌ | ❌ | ✅ | ✅ |
-| **Self-Hosted** | ❌ | ❌ | ❌ | ✅ |
-| **Plugin System** | ❌ | ❌ | ✅ | ✅ |
-| **Memory Persistence** | Session | Session | Session | ✅ Indefinite |
+| Feature | FF-Terminal | Claude Code | Codex CLI | Desmond Digital |
+|---------|-------------|-------------|-----------|-----------------|
+| **Headless Operation** | No | No | Yes | Yes |
+| **Multi-Day Persistence** | No | No | No | Yes |
+| **Custom Architecture** | No | No | No | Yes |
+| **Provider Agnostic** | No | No | No | Yes |
+| **No API Wrapping** | No | No | No | Yes |
+| **Open Source** | No | No | Yes | Yes |
+| **Self-Hosted** | No | No | No | Yes |
+| **Plugin System** | No | No | Yes | Yes |
+| **Memory Persistence** | Session | Session | Session | Indefinite |
 | **Transparency** | Limited | Limited | Limited | Full |
 
 ### Detailed Breakdown
@@ -233,9 +230,9 @@ Desmond Digital follows a modular, layered architecture designed for flexibility
 
 ---
 
-## 💡 Use Cases
+## Use Cases
 
-### 🔄 24/7 Operations
+### 24/7 Operations
 
 Run agents that never sleep. Desmond Digital's persistence layer means your agents can:
 
@@ -259,15 +256,15 @@ while True:
     agent.sleep(300)  # 5-minute breaks
 ```
 
-### 📋 Multi-Step Workflows
+### Multi-Step Workflows
 
 Automate complex workflows that span hours or days:
 
-1. **Research Phase** → Gather information
-2. **Analysis Phase** → Process and synthesize
-3. **Creation Phase** → Generate outputs
-4. **Review Phase** → Quality checks
-5. **Delivery Phase** → Send results
+1. **Research Phase** — Gather information
+2. **Analysis Phase** — Process and synthesize
+3. **Creation Phase** — Generate outputs
+4. **Review Phase** — Quality checks
+5. **Delivery Phase** — Send results
 
 ```python
 workflow = Workflow([
@@ -281,7 +278,7 @@ workflow = Workflow([
 result = workflow.execute()
 ```
 
-### 🖥️ Headless Automation
+### Headless Automation
 
 Perfect for server environments without displays:
 
@@ -290,7 +287,7 @@ Perfect for server environments without displays:
 - **Server Maintenance** — Automated system administration
 - **Background Research** — Long-running information gathering
 
-### 🎯 Specific Applications
+### Specific Applications
 
 | Domain | Use Case |
 |--------|----------|
@@ -303,7 +300,7 @@ Perfect for server environments without displays:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](./docs/CONTRIBUTING.md) for details.
 
@@ -332,16 +329,16 @@ We welcome contributions! Please see our [Contributing Guide](./docs/CONTRIBUTIN
 
 ### Contribution Areas
 
-- 🐛 **Bug fixes** — Help us squash bugs
-- ✨ **Features** — Add new capabilities
-- 📝 **Documentation** — Improve guides and examples
-- 🎨 **UX/UI** — Enhance CLI and API usability
-- 🧪 **Testing** — Increase test coverage
-- 🔌 **Plugins** — Create plugins for other tools
+- **Bug fixes** — Help us squash bugs
+- **Features** — Add new capabilities
+- **Documentation** — Improve guides and examples
+- **UX/UI** — Enhance CLI and API usability
+- **Testing** — Increase test coverage
+- **Plugins** — Create plugins for other tools
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 | Topic | Link |
 |-------|------|
@@ -356,27 +353,21 @@ We welcome contributions! Please see our [Contributing Guide](./docs/CONTRIBUTIN
 
 ---
 
-## 📄 License
+## License
 
 Desmond Digital is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-## 🦁 About
+## About
 
-Desmond Digital is maintained by the [Desmond Team](https://github.com/orgs/your-org/people). We're building the future of autonomous agents.
+Desmond Digital is maintained by [Desmond Digital Services](https://github.com/desmond-digital-services). We're building the future of autonomous agents.
 
 **Questions? Reach out:**
-- 📧 Email: team@desmonddigital.dev
-- 💬 Discord: [Join our server](https://discord.gg/desmonddigital)
-- 🐦 Twitter: [@DesmondDigital](https://twitter.com/DesmondDigital)
+- Email: team@desmonddigital.dev
+- Discord: [Join our server](https://discord.gg/desmonddigital)
+- Twitter: [@DesmondDigital](https://twitter.com/DesmondDigital)
 
 ---
 
-<div align="center">
-
-**Built with ❤️ by the Desmond Team**
-
 *Making autonomous agents work for everyone*
-
-</div>
