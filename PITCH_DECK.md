@@ -1,6 +1,6 @@
 # Desmond Digital Pitch Deck
 
-**Version:** 1.0  
+**Version:** 1.0
 **Last Updated:** January 30, 2026
 
 ---
@@ -24,10 +24,10 @@ Traditional "Agent" Tools:
 ┌─────────────────────────────────────┐
 │  Chat Interface → You → API Call    │
 │                                     │
-│  Requires human at every step       │
+│  Requires human at every step        │
 │  Can't run when you're away         │
 │  Session-scoped, loses context      │
-│  Just a prettier way to call APIs   │
+│  Just a prettier way to call APIs  │
 └─────────────────────────────────────┘
 ```
 
@@ -171,9 +171,9 @@ So he built something else.
 3. **Managed Autonomy** — $2,000-$15,000/month (we run it)
 4. **Industry Solutions** — $499-$1,499/month (pre-built packages)
 
-**Target:** 
+**Target:**
 - Year 1: $360K ARR
-- Year 2: $1.2M ARR  
+- Year 2: $1.2M ARR
 - Year 3: $4M ARR
 
 ---
@@ -181,7 +181,7 @@ So he built something else.
 ## Slide 10: Pricing
 
 | Tier | Price | What's Included |
-|------|-------|-----------------|
+|------|-------|----------------|
 | **Open Source** | Free | Framework, docs, community |
 | **Pro** | $99/mo | Commercial license, priority support |
 | **Business** | $499/mo | Unlimited agents, custom integrations |
@@ -229,18 +229,18 @@ So he built something else.
 
 ### Current State (January 2026)
 
-✅ Open source framework live on GitHub  
-✅ Production deployments running 24/7  
-✅ Website and documentation published  
-✅ Initial customer conversations started  
-✅ Industry recognition growing  
+✅ Open source framework live on GitHub
+✅ Production deployments running 24/7
+✅ Website and documentation published
+✅ Initial customer conversations started
+✅ Industry recognition growing
 
 ### 2026 Goals
 
-Q1: Launch commercial offerings  
-Q2: 10 paying customers  
-Q3: First enterprise implementation  
-Q4: $500K ARR milestone  
+Q1: Launch commercial offerings
+Q2: 10 paying customers
+Q3: First enterprise implementation
+Q4: $500K ARR milestone
 
 ---
 
@@ -270,11 +270,11 @@ Series A planned for Q3 2026
 
 ### Let's Build Something That Actually Works
 
-**TD (Founder)**  
+**TD (Founder)**
 Desmond Digital
 
-📧 founder@desmonddigital.dev  
-🐙 GitHub: github.com/0-CYBERDYNE-SYSTEMS-0  
+📧 founder@desmonddigital.dev
+🐙 GitHub: github.com/0-CYBERDYNE-SYSTEMS-0
 🌐 www.desmonddigital.dev
 
 ---

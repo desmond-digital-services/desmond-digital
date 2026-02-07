@@ -1,6 +1,6 @@
 # Desmond Digital
 
-**Autonomous Agent Framework**
+**Autonomous Agent Framework — Headless by Architecture**
 
 Desmond Digital provides tools for building and operating autonomous agents with flexible architecture and long-running persistence.
 
@@ -37,7 +37,7 @@ The framework is built around two core principles:
 ### Architecture
 
 ```
-Your Code -> Custom Agent Core -> Provider Abstraction -> Your Choice of LLM
+Your Code → Custom Agent Core → Provider Abstraction → Your Choice of LLM
                                           |
                          +----------------+----------------+
                          |                |                |
